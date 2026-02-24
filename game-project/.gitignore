@@ -1,0 +1,15 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environment (if someone creates one)
+venv/
+.env/
+
+# SQLite database file
+data/game.db
+
+# OS files
+.DS_Store
+Thumbs.db
