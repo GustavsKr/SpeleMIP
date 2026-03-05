@@ -62,8 +62,13 @@ class SimpleUI:
         self.computer_label.config(text=f"Computer: {self.computer_score}")
 
         self.sequence = generate_sequence(n)
+        if self.sequence is None:
+            messagebox.showerror("Error", "Length must be between 15 and 25.")
+            return
+
         self._draw_balls()
         self.status.config(text=f"Started. First: {self.first_player.get()}")
+        
     def _read_length(self):
         try:
             n = int(self.len_entry.get().strip())
