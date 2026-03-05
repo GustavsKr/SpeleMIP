@@ -2,7 +2,7 @@
 import random
 import tkinter as tk
 from tkinter import messagebox
-from src.generator import generate_sequence
+from generator import generate_sequence
 
 COLORS = {
     1: "#5db2fd",
@@ -30,6 +30,11 @@ class SimpleUI:
         self.computer_label = tk.Label(top, text="Computer: 100", font=("Arial", 12, "bold"))
         self.computer_label.pack(side=tk.LEFT, padx=20)
         top.pack(side=tk.TOP, fill=tk.X)
+
+        tk.Label(top, text="Sequence length (15–25):").pack(side=tk.LEFT, padx=(15, 5))
+        self.len_entry = tk.Entry(top, width=6)
+        self.len_entry.insert(0, "15")
+        self.len_entry.pack(side=tk.LEFT, padx=8)
 
         tk.Label(top, text="First player:").pack(side=tk.LEFT, padx=(15, 5))
         self.first_player = tk.StringVar(value="Player")
@@ -160,3 +165,11 @@ class SimpleUI:
 
         self.status.config(text=f"Picked: {val} | Remaining: {len(self.sequence)}")
 
+def main():
+    root = tk.Tk()
+    SimpleUI(root)
+    root.mainloop()
+
+
+if __name__ == "__main__":
+    main()
