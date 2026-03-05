@@ -2,6 +2,14 @@ import tkinter as tk
 from src.gui import SimpleUI
 from src.rules import apply_rules
 
+class SpelesKoks():
+    def __init__(self, generated_numbers, players_points, computers_points):
+        self.generated_numbers = generated_numbers
+        self.players_points = players_points
+        self.computers_points = computers_points
+
+        self.children = []  
+
 
 def main():
     # Spēlētāju sākotnējie punkti
