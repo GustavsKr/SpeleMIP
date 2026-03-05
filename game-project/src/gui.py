@@ -2,7 +2,7 @@
 import random
 import tkinter as tk
 from tkinter import messagebox
-from generator import generate_sequence
+from src.generator import generate_sequence
 
 COLORS = {
     1: "#5db2fd",
