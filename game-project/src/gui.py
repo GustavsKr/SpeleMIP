@@ -2,7 +2,7 @@
 import random
 import tkinter as tk
 from tkinter import messagebox
-from generator import generate_sequence
+from .generator import generate_sequence
 
 COLORS = {
     1: "#5db2fd",
@@ -154,13 +154,3 @@ class SimpleUI:
             pass
 
         self.status.config(text=f"Picked: {val} | Remaining: {len(self.sequence)}")
-
-
-def main():
-    root = tk.Tk()
-    SimpleUI(root)
-    root.mainloop()
-
-
-if __name__ == "__main__":
-    main()
