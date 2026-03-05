@@ -31,15 +31,15 @@ class SimpleUI:
         self.computer_label.pack(side=tk.LEFT, padx=20)
         top.pack(side=tk.TOP, fill=tk.X)
 
-        tk.Label(top, text="Sequence length (15–25):").pack(side=tk.LEFT)
-        self.len_entry = tk.Entry(top, width=6)
-        self.len_entry.insert(0, "15")
-        self.len_entry.pack(side=tk.LEFT, padx=8)
-
         tk.Label(top, text="First player:").pack(side=tk.LEFT, padx=(15, 5))
         self.first_player = tk.StringVar(value="Player")
         tk.Radiobutton(top, text="Player", variable=self.first_player, value="Player").pack(side=tk.LEFT)
         tk.Radiobutton(top, text="Computer", variable=self.first_player, value="Computer").pack(side=tk.LEFT)
+
+        tk.Label(top, text="AI mode:").pack(side=tk.LEFT, padx=(15, 5))
+        self.ai_mode = tk.StringVar(value="alphabeta")
+        tk.Radiobutton(top, text="Alpha-Beta", variable=self.ai_mode, value="alphabeta").pack(side=tk.LEFT)
+        tk.Radiobutton(top, text="Minimax", variable=self.ai_mode, value="minimax").pack(side=tk.LEFT)
 
         self.start_btn = tk.Button(top, text="Start", width=10, command=self.start_game)
         self.start_btn.pack(side=tk.LEFT, padx=12)
@@ -67,7 +67,7 @@ class SimpleUI:
             return
 
         self._draw_balls()
-        self.status.config(text=f"Started. First: {self.first_player.get()}")
+        self.status.config(text=f"Started. First: {self.first_player.get()} | AI: {self.ai_mode.get()}")
         
     def _read_length(self):
         try:
@@ -159,3 +159,4 @@ class SimpleUI:
             pass
 
         self.status.config(text=f"Picked: {val} | Remaining: {len(self.sequence)}")
+
