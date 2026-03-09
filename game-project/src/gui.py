@@ -3,6 +3,8 @@ import random
 import tkinter as tk
 from tkinter import messagebox
 from src.generator import generate_sequence
+from src.rules import apply_rules
+from src.ai import choose_move
 
 COLORS = {
     1: "#5db2fd",
@@ -61,6 +63,8 @@ class SimpleUI:
         if n is None:
             return
 
+        self.current_player = self.first_player.get()
+
         self.player_score = 100
         self.computer_score = 100
         self.player_label.config(text=f"Player: {self.player_score}")
@@ -73,6 +77,9 @@ class SimpleUI:
 
         self._draw_balls()
         self.status.config(text=f"Started. First: {self.first_player.get()} | AI: {self.ai_mode.get()}")
+        
+        if self.first_player.get() == "Computer":
+            self.root.after(1000, self.computer_move)
         
     def _read_length(self):
         try:
@@ -132,6 +139,10 @@ class SimpleUI:
             self.ball_map[circle_id] = (text_id, val)
 
     def on_click(self, event):
+        
+        if self.current_player != "Player":
+            return  # Ignore clicks when it's not player's turn
+
         items = self.canvas.find_overlapping(event.x, event.y, event.x, event.y)
         if not items:
             return
@@ -163,7 +174,91 @@ class SimpleUI:
         except ValueError:
             pass
 
+        self.player_score, self.computer_score = apply_rules(
+            self.player_score,
+            self.computer_score,
+            1,
+            val
+        )
+
+        self.player_label.config(text=f"Player: {self.player_score}")
+        self.computer_label.config(text=f"Computer: {self.computer_score}")
+        
         self.status.config(text=f"Picked: {val} | Remaining: {len(self.sequence)}")
+
+        if not self.sequence:
+            self._end_game()
+            return
+        
+        self.current_player = "Computer"
+        self.root.after(500, self.computer_move)
+
+
+
+    def computer_move(self):
+
+        if not self.sequence:
+            self._end_game()
+            return
+
+        move = choose_move(
+            self.sequence,
+            self.player_score,
+            self.computer_score,
+            2
+        )
+
+       
+
+
+    # atrodam bumbiņu ar šo skaitli
+        for circle_id, (text_id, val) in list(self.ball_map.items()):
+            if val == move:
+
+                self.canvas.delete(circle_id)
+                self.canvas.delete(text_id)
+                self.ball_map.pop(circle_id)
+
+                try:
+                    self.sequence.remove(val)
+                except ValueError:
+                    pass
+
+                self.player_score, self.computer_score = apply_rules(
+                    self.player_score,
+                    self.computer_score,
+                    2,
+                    val
+                )
+
+                self.player_label.config(text=f"Player: {self.player_score}")
+                self.computer_label.config(text=f"Computer: {self.computer_score}")
+
+                self.status.config(text=f"Computer picked: {val}")
+
+
+                if not self.sequence:
+                    self._end_game()
+                    return
+
+                self.current_player = "Player"
+
+                break
+
+    
+    def _end_game(self):
+        if self.player_score < self.computer_score:
+            winner = "Player wins!"
+        elif self.player_score > self.computer_score:
+            winner = "Computer wins!"
+        else:
+            winner = "Tie game!"
+
+        messagebox.showinfo("Game Over", 
+            f"Game finished!\nPlayer: {self.player_score}\nComputer: {self.computer_score}\n\n{winner}")
+        
+        self.current_player = None
+
 
 def main():
     root = tk.Tk()
