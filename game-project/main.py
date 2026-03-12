@@ -2,9 +2,7 @@
 import random
 import tkinter as tk
 from tkinter import messagebox
-from src.generator import generate_sequence
-from src.rules import apply_rules
-from src.ai import choose_move
+from ai import choose_move
 
 COLORS = {
     1: "#5db2fd",
@@ -70,7 +68,7 @@ class SimpleUI:
         self.player_label.config(text=f"Player: {self.player_score}")
         self.computer_label.config(text=f"Computer: {self.computer_score}")
 
-        self.sequence = generate_sequence(n)
+        self.sequence = self.generate_sequence(n)
         if self.sequence is None:
             messagebox.showerror("Error", "Length must be between 15 and 25.")
             return
@@ -174,7 +172,7 @@ class SimpleUI:
         except ValueError:
             pass
 
-        self.player_score, self.computer_score = apply_rules(
+        self.player_score, self.computer_score = self.apply_rules(
             self.player_score,
             self.computer_score,
             1,
@@ -193,7 +191,48 @@ class SimpleUI:
         self.current_player = "Computer"
         self.root.after(500, self.computer_move)
 
+    def generate_sequence(self, input_number: int):
+        
+        num_sequence = []
 
+        #check for  data type 
+        if not isinstance(input_number, int):
+            print("error: input must be integer")
+            return None
+
+        if input_number < 15 or input_number > 25:
+            print("error: numbers must be between 15 and 25")
+            return None
+
+        
+        for n in range(input_number):
+                random_int = random.randint(1, 4)
+                num_sequence.append(random_int)
+
+        return num_sequence 
+
+    def apply_rules(self, p1, p2, current_player, number):
+        if number == 1:
+            if current_player == 1:
+                p2 += 1
+            else:
+                p1 += 1
+        elif number == 3:
+            if current_player == 1:
+                p2 += 3
+            else:
+                p1 += 3
+        elif number == 2:
+            if current_player == 1:
+                p1 -= 4
+            else:
+                p2 -= 4
+        elif number == 4:
+            if current_player == 1:
+                p1 -= 8
+            else:
+                p2 -= 8
+        return p1, p2
 
     def computer_move(self):
 
@@ -230,11 +269,11 @@ class SimpleUI:
                 except ValueError:
                     pass
 
-                self.player_score, self.computer_score = apply_rules(
+                self.player_score, self.computer_score = self.apply_rules(
                     self.player_score,
                     self.computer_score,
                     2,
-                    val
+                    val,
                 )
 
                 self.player_label.config(text=f"Player: {self.player_score}")
@@ -266,11 +305,6 @@ class SimpleUI:
         self.current_player = None
 
 def main():
-    # Spēlētāju sākotnējie punkti
-    p1, p2 = 100, 100
-    # apply_rules(p1, p2, current_player, number)
-
-
     # Uzsākt spēles GUI
     root = tk.Tk()
     SimpleUI(root)
@@ -279,3 +313,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# https://chatgpt.com/share/699f5f9e-d234-8010-83b5-d1d331d7c133
+# https://chatgpt.com/share/69aefceb-eb9c-8003-a68e-39eb44212653

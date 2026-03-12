@@ -7,9 +7,6 @@ __pycache__/
 venv/
 .env/
 
-# SQLite database file
-data/game.db
-
 # OS files
 .DS_Store
 Thumbs.db
