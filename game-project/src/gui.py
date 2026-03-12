@@ -201,15 +201,21 @@ class SimpleUI:
             self._end_game()
             return
 
-        move = choose_move(
-            self.sequence,
-            self.player_score,
-            self.computer_score,
-            2
-        )
-
-       
-
+        if self.ai_mode.get() == "alphabeta":
+            move = choose_move(
+                self.sequence,
+                self.player_score,
+                self.computer_score,
+                2
+            )
+        else:
+            move = choose_move(
+                self.sequence,
+                self.player_score,
+                self.computer_score,
+                2,
+                depth=6
+            )
 
     # atrodam bumbiņu ar šo skaitli
         for circle_id, (text_id, val) in list(self.ball_map.items()):
