@@ -2,7 +2,7 @@
 import random
 import tkinter as tk
 from tkinter import messagebox
-from ai import choose_move
+from ai import choose_move, choose_move_minimax
 
 COLORS = {
     1: "#5db2fd",
@@ -48,6 +48,10 @@ class SimpleUI:
 
         self.start_btn = tk.Button(top, text="Start", width=10, command=self.start_game)
         self.start_btn.pack(side=tk.LEFT, padx=12)
+
+        #noteikumu poga
+        self.rules_btn = tk.Button(top, text="Rules", width=10, command=self.show_rules)
+        self.rules_btn.pack(side=tk.LEFT, padx=5)
 
         self.status = tk.Label(top, text="", anchor="w")
         self.status.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=10)
@@ -233,6 +237,24 @@ class SimpleUI:
             else:
                 p2 -= 8
         return p1, p2
+    
+    #spēles apraksts
+
+    def show_rules(self):
+
+        rules_text = (
+            "Katram spēlētājam ir piešķirts 100 punktu.\n"
+            "Spēlētāji izpilda gājienus pēc kārtas.\n"
+            "Katrā gājienā izvēlas vienu skaitli.\n"
+            "Ja tiek izņemts pāra skaitlis, tad no spēlētāja punktu skaita tiek atņemta izņemtā skaitļa divkāršota summa.\n"
+            "Ja tiek izņemts nepāra skaitlis, tad šis skaitlis tiek pieskaitīts pretinieka punktu skaitam.\n"
+            "Spēle beidzas, kad virkne ir tukša.\n"
+            "Uzvar spēlētājs, kam spēles beigās ir palicis mazāk punktu.\n"
+            "Neizšķirts rezultāts ir tad, kad abiem spēlētājiem spēles beigās ir vienāds punktu skaits."
+
+        )
+
+        messagebox.showinfo("Game Rules", rules_text)
 
     def computer_move(self):
 
@@ -248,12 +270,11 @@ class SimpleUI:
                 2
             )
         else:
-            move = choose_move(
+            move = choose_move_minimax(
                 self.sequence,
                 self.player_score,
                 self.computer_score,
-                2,
-                depth=6
+                2
             )
 
     # atrodam bumbiņu ar šo skaitli
@@ -317,3 +338,4 @@ if __name__ == "__main__":
 
 # https://chatgpt.com/share/699f5f9e-d234-8010-83b5-d1d331d7c133
 # https://chatgpt.com/share/69aefceb-eb9c-8003-a68e-39eb44212653
+# https://chatgpt.com/share/69b2fae5-85dc-8010-a553-12b2c13887ec (noteikumu poga)

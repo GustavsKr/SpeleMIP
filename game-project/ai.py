@@ -155,3 +155,79 @@ def choose_move(
             beta = min(beta, best_val)
 
     return best_move
+
+def choose_move_minimax(
+    sequence: List[int],
+    p1: int,
+    p2: int,
+    current_player: int,
+    depth: int = 6,
+) -> int:
+
+    c1 = sequence.count(1)
+    c2 = sequence.count(2)
+    c3 = sequence.count(3)
+    c4 = sequence.count(4)
+
+    memo: Dict[Tuple[State, int], int] = {}
+    possible = _moves(c1, c2, c3, c4)
+
+    best_move = possible[0]
+
+    if current_player == 1:
+        best_val = -10**9
+        for move in possible:
+            nxt = _apply_pick(c1, c2, c3, c4, p1, p2, current_player, move)
+            val = minimax(nxt, depth - 1, memo)
+
+            if val > best_val:
+                best_val = val
+                best_move = move
+    else:
+        best_val = 10**9
+        for move in possible:
+            nxt = _apply_pick(c1, c2, c3, c4, p1, p2, current_player, move)
+            val = minimax(nxt, depth - 1, memo)
+
+            if val < best_val:
+                best_val = val
+                best_move = move
+
+    return best_move
+
+#minimax algoritms
+def minimax(
+    state: State,
+    depth: int,
+    memo: Dict[Tuple[State, int], int],
+) -> int:
+
+    key = (state, depth)
+    if key in memo:
+        return memo[key]
+
+    c1, c2, c3, c4, p1, p2, player = state
+
+    # terminālais stāvoklis
+    if (c1 + c2 + c3 + c4) == 0 or depth == 0:
+        val = _evaluate(p1, p2)
+        memo[key] = val
+        return val
+
+    possible = _moves(c1, c2, c3, c4)
+
+    if player == 1:  # MAX
+        value = -10**9
+        for move in possible:
+            nxt = _apply_pick(c1, c2, c3, c4, p1, p2, player, move)
+            value = max(value, minimax(nxt, depth - 1, memo))
+    else:  # MIN
+        value = 10**9
+        for move in possible:
+            nxt = _apply_pick(c1, c2, c3, c4, p1, p2, player, move)
+            value = min(value, minimax(nxt, depth - 1, memo))
+
+    memo[key] = value
+    return value
+
+#https://chatgpt.com/share/69b2f796-2cbc-8010-9b04-14cfceff0d98 (minimax algoritms)
