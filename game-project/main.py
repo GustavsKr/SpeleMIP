@@ -1,4 +1,3 @@
-
 import random
 import tkinter as tk
 from tkinter import messagebox
@@ -21,7 +20,7 @@ class SimpleUI:
         self.sequence = []
         self.player_score = 100
         self.computer_score = 100
-        self.ball_map = {}  # circle_id -> (text_id, value)
+        self.ball_map = {}
 
         top = tk.Frame(root, padx=10, pady=10)
         self.player_label = tk.Label(top, text="Player: 100", font=("Arial", 12, "bold"))
@@ -64,6 +63,8 @@ class SimpleUI:
         n = self._read_length()
         if n is None:
             return
+        self.canvas.delete("all")
+        self.ball_map.clear()
 
         self.current_player = self.first_player.get()
 
@@ -76,13 +77,14 @@ class SimpleUI:
         if self.sequence is None:
             messagebox.showerror("Error", "Length must be between 15 and 25.")
             return
+        self.start_btn.pack_forget()
 
         self._draw_balls()
         self.status.config(text=f"Started. First: {self.first_player.get()} | AI: {self.ai_mode.get()}")
-        
+
         if self.first_player.get() == "Computer":
             self.root.after(1000, self.computer_move)
-        
+
     def _read_length(self):
         try:
             n = int(self.len_entry.get().strip())
@@ -141,9 +143,9 @@ class SimpleUI:
             self.ball_map[circle_id] = (text_id, val)
 
     def on_click(self, event):
-        
+
         if self.current_player != "Player":
-            return  # Ignore clicks when it's not player's turn
+            return
 
         items = self.canvas.find_overlapping(event.x, event.y, event.x, event.y)
         if not items:
@@ -185,21 +187,20 @@ class SimpleUI:
 
         self.player_label.config(text=f"Player: {self.player_score}")
         self.computer_label.config(text=f"Computer: {self.computer_score}")
-        
+
         self.status.config(text=f"Picked: {val} | Remaining: {len(self.sequence)}")
 
         if not self.sequence:
             self._end_game()
             return
-        
+
         self.current_player = "Computer"
         self.root.after(500, self.computer_move)
 
     def generate_sequence(self, input_number: int):
-        
+
         num_sequence = []
 
-        #check for  data type 
         if not isinstance(input_number, int):
             print("error: input must be integer")
             return None
@@ -208,12 +209,12 @@ class SimpleUI:
             print("error: numbers must be between 15 and 25")
             return None
 
-        
-        for n in range(input_number):
-                random_int = random.randint(1, 4)
-                num_sequence.append(random_int)
 
-        return num_sequence 
+        for n in range(input_number):
+            random_int = random.randint(1, 4)
+            num_sequence.append(random_int)
+
+        return num_sequence
 
     def apply_rules(self, p1, p2, current_player, number):
         if number == 1:
@@ -237,8 +238,7 @@ class SimpleUI:
             else:
                 p2 -= 8
         return p1, p2
-    
-    #spēles apraksts
+
 
     def show_rules(self):
 
@@ -277,7 +277,6 @@ class SimpleUI:
                 2
             )
 
-    # atrodam bumbiņu ar šo skaitli
         for circle_id, (text_id, val) in list(self.ball_map.items()):
             if val == move:
 
@@ -311,7 +310,6 @@ class SimpleUI:
 
                 break
 
-    
     def _end_game(self):
         if self.player_score < self.computer_score:
             winner = "Player wins!"
@@ -320,13 +318,19 @@ class SimpleUI:
         else:
             winner = "Tie game!"
 
-        messagebox.showinfo("Game Over", 
-            f"Game finished!\nPlayer: {self.player_score}\nComputer: {self.computer_score}\n\n{winner}")
-        
+        play_again = messagebox.askyesno(
+            "Game Over",
+            f"Game finished!\nPlayer: {self.player_score}\nComputer: {self.computer_score}\n\n{winner}\n\nStart a new game?")
+
         self.current_player = None
+        if play_again:
+            self.start_btn.pack(side=tk.LEFT, padx=12)
+            self.status.config(text="Choose First player and AI mode, then press Start.")
+        else:
+            self.status.config (text="Game finished.")
 
 def main():
-    # Uzsākt spēles GUI
+
     root = tk.Tk()
     SimpleUI(root)
     root.mainloop()
