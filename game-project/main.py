@@ -15,7 +15,7 @@ class SimpleUI:
     def __init__(self, root: tk.Tk):
         self.root = root
         self.root.title("Number Balls Game")
-        self.root.minsize(820, 520)
+        self.root.state("zoomed")
 
         self.sequence = []
         self.player_score = 100
@@ -45,15 +45,17 @@ class SimpleUI:
         tk.Radiobutton(top, text="Alpha-Beta", variable=self.ai_mode, value="alphabeta").pack(side=tk.LEFT)
         tk.Radiobutton(top, text="Minimax", variable=self.ai_mode, value="minimax").pack(side=tk.LEFT)
 
-        self.start_btn = tk.Button(top, text="Start", width=10, command=self.start_game)
-        self.start_btn.pack(side=tk.LEFT, padx=12)
+        self.control_frame = tk.Frame(top)
+        self.control_frame.pack(side=tk.LEFT, padx=12)
+
+        self.start_btn = tk.Button(self.control_frame, text="Start", width=10, command=self.start_game)
+        self.start_btn.pack()
 
         #noteikumu poga
         self.rules_btn = tk.Button(top, text="Rules", width=10, command=self.show_rules)
         self.rules_btn.pack(side=tk.LEFT, padx=5)
 
-        self.status = tk.Label(top, text="", anchor="w")
-        self.status.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=10)
+        self.status = tk.Label(self.control_frame, text="", anchor="center")
 
         self.canvas = tk.Canvas(root, width=780, height=380, bg="#cde0f2", highlightthickness=1)
         self.canvas.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
@@ -78,6 +80,7 @@ class SimpleUI:
             messagebox.showerror("Error", "Length must be between 15 and 25.")
             return
         self.start_btn.pack_forget()
+        self.status.pack()
 
         self._draw_balls()
         self.status.config(text=f"Started. First: {self.first_player.get()} | AI: {self.ai_mode.get()}")
@@ -119,8 +122,18 @@ class SimpleUI:
         for val in self.sequence:
             x, y = None, None
             for _ in range(tries):
-                nx = random.randint(r + 10, max(r + 10, w - r - 10))
-                ny = random.randint(r + 10, max(r + 10, h - r - 10))
+                min_x = r + 10
+                max_x = w - r - 10
+                min_y = r + 10
+                max_y = h - r - 10
+
+                if max_x <= min_x:
+                    max_x = min_x + 1
+                if max_y <= min_y:
+                    max_y = min_y + 1
+
+                nx = random.randint(min_x, max_x)
+                ny = random.randint(min_y, max_y)
                 if ok(nx, ny):
                     x, y = nx, ny
                     break
@@ -324,8 +337,8 @@ class SimpleUI:
 
         self.current_player = None
         if play_again:
-            self.start_btn.pack(side=tk.LEFT, padx=12)
-            self.status.config(text="Choose First player and AI mode, then press Start.")
+            self.status.pack_forget()
+            self.start_btn.pack()
         else:
             self.status.config (text="Game finished.")
 
@@ -343,3 +356,4 @@ if __name__ == "__main__":
 # https://chatgpt.com/share/699f5f9e-d234-8010-83b5-d1d331d7c133
 # https://chatgpt.com/share/69aefceb-eb9c-8003-a68e-39eb44212653
 # https://chatgpt.com/share/69b2fae5-85dc-8010-a553-12b2c13887ec (noteikumu poga)
+# https://chatgpt.com/share/69b9bfab-960c-8008-8746-179a7b55b237 (fullscreen un gui error labojumi)
