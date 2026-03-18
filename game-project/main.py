@@ -355,5 +355,6 @@ if __name__ == "__main__":
 
 # https://chatgpt.com/share/699f5f9e-d234-8010-83b5-d1d331d7c133
 # https://chatgpt.com/share/69aefceb-eb9c-8003-a68e-39eb44212653
+# https://chatgpt.com/share/69bab664-42d0-8006-bded-637c29436fa1 
 # https://chatgpt.com/share/69b2fae5-85dc-8010-a553-12b2c13887ec (noteikumu poga)
 # https://chatgpt.com/share/69b9bfab-960c-8008-8746-179a7b55b237 (fullscreen un gui error labojumi)
