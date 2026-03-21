@@ -88,6 +88,10 @@ class SimpleUI:
         if self.first_player.get() == "Computer":
             self.root.after(1000, self.computer_move)
 
+    def update_ui_scores(self):
+        self.player_label.config(text=f"Player: {self.player_score}")
+        self.computer_label.config(text=f"Computer: {self.computer_score}")
+
     def _read_length(self):
         try:
             n = int(self.len_entry.get().strip())
@@ -196,8 +200,18 @@ class SimpleUI:
             self.computer_score,
             1,
             val
+
         )
 
+        if self.player_score < 70:
+            messagebox.showinfo("Game Over", "Player nokļuva zem 70 – Player zaudē!")
+            self._end_game(winner="Computer wins!")
+            return
+        elif self.computer_score < 70:
+            messagebox.showinfo("Game Over", "Computer nokļuva zem 70 – Computer zaudē!")
+            self._end_game(winner="Player wins!")
+            return    
+                        
         self.player_label.config(text=f"Player: {self.player_score}")
         self.computer_label.config(text=f"Computer: {self.computer_score}")
 
@@ -229,7 +243,7 @@ class SimpleUI:
 
         return num_sequence
 
-    def apply_rules(self, p1, p2, current_player, number):
+    def apply_rules(self, p1, p2, current_player, number, limits=70):
         if number == 1:
             if current_player == 1:
                 p2 += 1
@@ -250,6 +264,11 @@ class SimpleUI:
                 p1 -= 8
             else:
                 p2 -= 8
+
+        # Nepieļaut punktus zem 0 (vai var arī threshold, ja gribi)
+        p1 = max(p1, 0)
+        p2 = max(p2, 0)
+
         return p1, p2
 
 
@@ -309,38 +328,57 @@ class SimpleUI:
                     val,
                 )
 
-                self.player_label.config(text=f"Player: {self.player_score}")
-                self.computer_label.config(text=f"Computer: {self.computer_score}")
+                self.update_ui_scores()
 
-                self.status.config(text=f"Computer picked: {val}")
-
-
-                if not self.sequence:
-                    self._end_game()
+                            # Pārbaudīt 70 punktus vai tukšu virkni
+                if self.player_score < 70:
+                    messagebox.showinfo("Game Over", "Player nokļuva zem 70 – Player zaudē!")
+                    self._end_game(winner="Computer wins!")
+                    return
+                elif self.computer_score < 70:
+                    messagebox.showinfo("Game Over", "Computer nokļuva zem 70 – Computer zaudē!")
+                    self._end_game(winner="Player wins!")
+                    return
+                elif not self.sequence:
+                    self._end_game()  # šeit var atstāt tukšu, jo uzvarētāju nosaka pēc punktiem
                     return
 
                 self.current_player = "Player"
 
                 break
 
-    def _end_game(self):
-        if self.player_score < self.computer_score:
-            winner = "Player wins!"
-        elif self.player_score > self.computer_score:
-            winner = "Computer wins!"
-        else:
-            winner = "Tie game!"
 
+    def _end_game(self, winner: str = None):
+        """
+        Pabeidz spēli. 
+        Ja 'winner' ir norādīts, izmanto to tieši.
+        Ja nav, nosaka uzvarētāju pēc punktu salīdzinājuma.
+        """
+
+        if winner is None:
+            if self.player_score < self.computer_score:
+                winner = "Player wins!"
+            elif self.player_score > self.computer_score:
+                winner = "Computer wins!"
+            else:
+                winner = "Tie game!"
+
+        # Rāda paziņojumu un piedāvā jaunu spēli
         play_again = messagebox.askyesno(
             "Game Over",
-            f"Game finished!\nPlayer: {self.player_score}\nComputer: {self.computer_score}\n\n{winner}\n\nStart a new game?")
+            f"Game finished!\n"
+            f"Player: {self.player_score}\n"
+            f"Computer: {self.computer_score}\n\n"
+            f"{winner}\n\nStart a new game?"
+        )
 
         self.current_player = None
+
         if play_again:
             self.status.pack_forget()
             self.start_btn.pack()
         else:
-            self.status.config (text="Game finished.")
+            self.status.config(text="Game finished.")
 
 def main():
 
@@ -358,3 +396,5 @@ if __name__ == "__main__":
 # https://chatgpt.com/share/69bab664-42d0-8006-bded-637c29436fa1 
 # https://chatgpt.com/share/69b2fae5-85dc-8010-a553-12b2c13887ec (noteikumu poga)
 # https://chatgpt.com/share/69b9bfab-960c-8008-8746-179a7b55b237 (fullscreen un gui error labojumi)
+# https://chatgpt.com/share/69bf130c-094c-8010-becf-5f097637766e ( 70 punktu limits)
+# https://chatgpt.com/share/69bf233b-78e8-8010-bb20-bc06c16e2821 (efektīvāk atjaunināt teksta laukus)
