@@ -8,7 +8,7 @@ State = Tuple[int, int, int, int, int, int, int]
 # (c1, c2, c3, c4, p1, p2, player)
 
 # ---------------------------------
-# Node klase (koka mezgls)
+# Spēles koks
 # ---------------------------------
 class Node:
     def __init__(self, state: State, player: int):
