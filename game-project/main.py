@@ -154,6 +154,10 @@ class SimpleUI:
         return [random.randint(1, 4) for _ in range(n)]
 
     def _draw_balls(self):
+
+        self.root.update_idletasks()
+        w, h = self.canvas.winfo_width(), self.canvas.winfo_height()
+
         self.canvas.delete("all")
         self.ball_map.clear()
 
@@ -253,13 +257,23 @@ class SimpleUI:
         else:
             self.status.config(text="Game finished.")
 
+import sys
+
 def main():
     root = tk.Tk()
+    
+    # cross-platform window sizing
+    if sys.platform == "darwin":  # macOS
+        root.geometry("1024x768")
+    else:
+        root.state("zoomed")
+    
     SimpleUI(root)
     root.mainloop()
 
 if __name__ == "__main__":
     main()
+
 
 # https://chatgpt.com/share/699f5f9e-d234-8010-83b5-d1d331d7c133
 # https://chatgpt.com/share/69aefceb-eb9c-8003-a68e-39eb44212653
